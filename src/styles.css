@@ -1,0 +1,17 @@
+/* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: "Dune Rise";
+  src: url("assets/fonts/dune_rise/Dune_Rise.ttf");
+}
+
+* {
+
+  font-family: "Dune Rise", serif;
+
+}
+
+body {
+
+  height: 100vh;
+
+}

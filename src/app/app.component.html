@@ -1,0 +1,157 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary" style="z-index: 100;">
+  <div class="container-fluid">
+    <a class="navbar-brand">DS</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <button class="nav-link btn btn-light" [disabled]="!serialSupported || state == 'CONNECTED'" (click)="requestPort()">Devices</button>
+        </li>
+        <li class="nav-item">
+          @switch (state) {
+            @case ("CONNECTED") {
+              <button class="nav-link btn btn-light" [disabled]="!serialSupported" (click)="disconnectFromPort()">Disconnect</button>
+            }
+            @default {
+              <button class="nav-link btn btn-light" [disabled]="!serialSupported" (click)="connectToPort()">Connect</button>
+            }
+          }
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+@if (serialSupported) {
+
+  <div class="container-fluid">
+
+      @switch (state) {
+        @case ("DISCONNECTED") {
+          <div class="row bg-danger text-white text-center" style="font-size: 0.75rem">
+            <div class="col">
+              DISCONNECTED
+            </div>
+          </div>
+        }
+        @case ("CONNECTABLE") {
+          <div class="row bg-warning text-white text-center" style="font-size: 0.75rem">
+            <div class="col">
+              CONNECTABLE
+            </div>
+          </div>
+        }
+        @case ("CONNECTED") {
+          <div class="row bg-success text-white text-center" style="font-size: 0.75rem">
+            <div class="col">
+              CONNECTED
+            </div>
+          </div>
+        }
+      }
+
+    <div class="row bg-dark text-white" style="font-size: 0.75rem">
+      <div class="col border-end border-white" *ngIf="port">
+        USBVENDORID: {{port.getInfo().usbVendorId}}
+      </div>
+      <div class="col" *ngIf="port">
+        USBPRODUCTID: {{port.getInfo().usbProductId}}
+      </div>
+    </div>
+
+  </div>
+
+  <div class="d-flex justify-content-center align-items-center" style="height: 100%; width: 100%; position: absolute; top: 0;">
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class="col-6">
+
+          <div class="container">
+
+            <div class="row mb-2">
+
+              <div class="card p-0 rounded-0">
+
+                <div class="card-header">
+                  <h4 class="m-0">Last data</h4>
+                </div>
+                <div class="card-body text-end">
+                  {{data.length === 0 ? "NAN" : data[data.length - 1].data}}
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="row">
+
+              <div class="card p-0 rounded-0">
+
+                <div class="card-header">
+                  <h4 class="m-0">History</h4>
+                </div>
+                <div class="card-body text-end overflow-y-scroll" style="max-height: 200px;">
+                  <table class="table">
+                    <thead>
+                    <tr>
+                      <th scope="col">Time</th>
+                      <th scope="col">Data</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let d of data" style="font-size: 0.8rem">
+                      <th scope="row">{{d.time}}</th>
+                      <td>{{d.data}}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="card-footer">
+                  <button class="btn btn-danger text-white rounded-0" (click)="flushData()">Flush data</button>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="col-6">
+
+            <canvas baseChart style="width: 100%; height: 100%"
+                    [type]="'line'"
+                    [data]="lineChartData"
+                    [options]="lineChartOptions"
+                    [legend]="lineChartLegend">
+            </canvas>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+} @else {
+
+  <div class="d-flex justify-content-center align-items-center" style="height: 100%; width: 100%; position: absolute; top: 0;">
+
+    <div class="container">
+      <div class="alert alert-danger" role="alert">
+        Your browser is not supported!
+      </div>
+    </div>
+
+  </div>
+
+}
+
