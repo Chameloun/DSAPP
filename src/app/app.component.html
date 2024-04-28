@@ -81,7 +81,7 @@
                   <h4 class="m-0">Last data</h4>
                 </div>
                 <div class="card-body text-end">
-                  {{data.length === 0 ? "NAN" : data[data.length - 1].data}}
+                  {{data.length === 0 ? "NAN" : data[data.length - 1].y}}
                 </div>
 
               </div>
@@ -105,8 +105,8 @@
                     </thead>
                     <tbody>
                     <tr *ngFor="let d of data" style="font-size: 0.8rem">
-                      <th scope="row">{{d.time}}</th>
-                      <td>{{d.data}}</td>
+                      <th scope="row">{{d.label}}</th>
+                      <td>{{d.y}}</td>
                     </tr>
                     </tbody>
                   </table>
@@ -126,12 +126,7 @@
 
         <div class="col-6">
 
-            <canvas baseChart style="width: 100%; height: 100%"
-                    [type]="'line'"
-                    [data]="lineChartData"
-                    [options]="lineChartOptions"
-                    [legend]="lineChartLegend">
-            </canvas>
+          <canvasjs-chart [options]="chartOptions" [styles]="{width: '100%', height:'100%'}" (chartInstance)="getChartInstance($event)"></canvasjs-chart>
 
         </div>
 

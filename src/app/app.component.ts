@@ -1,13 +1,12 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {NgForOf, NgIf} from "@angular/common";
-import {BaseChartDirective} from "ng2-charts";
-import { ChartConfiguration, ChartOptions, ChartType } from "chart.js";
+import {CanvasJSAngularChartsModule} from "@canvasjs/angular-charts";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NgIf, NgForOf, BaseChartDirective],
+  imports: [RouterOutlet, NgIf, NgForOf, CanvasJSAngularChartsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -16,31 +15,23 @@ export class AppComponent implements OnInit {
   serialSupported = false;
   protected port: any;
   protected state: string;
-  data: {time: string, data: number}[] = [];
+  data: {label: string, y: number}[] = [{label: (new Date()).toLocaleTimeString(), y: 400}, {label: (new Date()).toLocaleTimeString(), y: 400}];
   reader: any;
   reading: boolean = false;
 
   // @ts-ignore
   protected protected serial = navigator.serial;
 
-  @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
+  chart: any;
 
-  public lineChartData: ChartConfiguration<'line'>['data'] = {
-    labels: [],
-    datasets: [
-      {
-        data: [],
-        label: "Diameter [mm]",
-        tension: 0.5,
-        animation: false,
-        pointRadius: 0,
-      }
-    ]
+  chartOptions = {
+    zoomEnabled: true,
+    exportEnabled: true,
+    data: [{
+      type: "line",
+      dataPoints: []
+    }]
   };
-  public lineChartOptions: ChartOptions<'line'> = {
-    responsive: false,
-  };
-  public lineChartLegend = true;
 
   constructor() {
 
@@ -101,18 +92,18 @@ export class AppComponent implements OnInit {
                 if (value) {
 
                   let newData = decoder.decode(value.buffer).split("\r\n").map(data => ({
-                    time: (new Date()).toLocaleTimeString(),
-                    data: +data
+                    label: (new Date()).toLocaleTimeString(),
+                    y: +data
                   }));
 
                   newData.pop();
 
                   this.data.push(...newData);
 
-                  this.lineChartData.labels = this.data.map(item => item.time);
-                  this.lineChartData.datasets[0].data = this.data.map(item => item.data);
+                  // @ts-ignore
+                  this.chartOptions.data[0].dataPoints = this.data;
 
-                  this.chart?.update();
+                  this.chart.render();
 
                 }
                 readLoop();
@@ -163,10 +154,12 @@ export class AppComponent implements OnInit {
 
   flushData() {
 
-    this.lineChartData.labels = [];
-    this.lineChartData.datasets[0].data = [];
     this.data = [];
+    this.chart.render();
 
   }
 
+  getChartInstance(chart: object) {
+    this.chart = chart;
+  }
 }
