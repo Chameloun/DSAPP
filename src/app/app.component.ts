@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
   serialSupported = false;
   protected port: any;
   protected state: string;
-  data: {label: string, y: number}[] = [{label: (new Date()).toLocaleTimeString(), y: 400}, {label: (new Date()).toLocaleTimeString(), y: 400}];
+  data: {label: string, y: number}[] = [];
   reader: any;
   reading: boolean = false;
 
