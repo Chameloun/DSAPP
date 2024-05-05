@@ -93,7 +93,7 @@ export class AppComponent implements OnInit {
 
                   let newData = decoder.decode(value.buffer).split("\r\n").map(data => ({
                     label: (new Date()).toLocaleTimeString(),
-                    y: +data
+                    y: (+data / 10000)
                   }));
 
                   newData.pop();
